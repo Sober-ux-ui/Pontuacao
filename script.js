@@ -4,7 +4,7 @@
 const CONFIG = {
   // URL do JSON com os dados (gerado pelo Power Automate)
   // Enquanto estiver vazio, usa dados de exemplo
-  DATA_URL: '',
+  DATA_URL: '/dados.json',
 
   // Logo do Movimento Soberana (URL ou caminho do arquivo, ex.: 'logo.png').
   // Enquanto estiver vazio, aparece um espaço reservado "LOGO".
