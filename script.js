@@ -4,11 +4,11 @@
 const CONFIG = {
   // URL do JSON com os dados (gerado pelo Power Automate)
   // Enquanto estiver vazio, usa dados de exemplo
-  DATA_URL: '/dados.json',
+  DATA_URL: 'dados.json',
 
   // Logo do Movimento Soberana (URL ou caminho do arquivo, ex.: 'logo.png').
   // Enquanto estiver vazio, aparece um espaço reservado "LOGO".
-  LOGO_URL: '/LOGOTIPO.png',
+  LOGO_URL: 'LOGOTIPO.png',
 
   // Intervalo de atualização em milissegundos (10 minutos)
   REFRESH_INTERVAL: 10 * 60 * 1000,
