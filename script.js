@@ -427,25 +427,31 @@ function toggleTV(force) {
 }
 
 // ╔══════════════════════════════════════════════════════════╗
-// ║  TIMER — Countdown de 10 minutos                         ║
+// ║  TIMER — Sincronizado com múltiplos de 10 min no relógio ║
+// ║  Ex: se o evento começa às 08:00, atualiza 08:10, 08:20…║
 // ╚══════════════════════════════════════════════════════════╝
-let lastFetchTime = Date.now();
 
 function updateTimer() {
-  const elapsed = Math.floor((Date.now() - lastFetchTime) / 1000);
-  const remaining = Math.max(0, 600 - elapsed); // 10 min = 600s
-  const min = Math.floor(remaining / 60);
-  const sec = remaining % 60;
-  const display = (min < 10 ? '0' : '') + min + ':' + (sec < 10 ? '0' : '') + sec;
+  const now = new Date();
+  const min = now.getMinutes();
+  const sec = now.getSeconds();
+  // Quanto já passou dentro do ciclo de 10 min atual
+  const elapsed = (min % 10) * 60 + sec;
+  // Quanto falta para o próximo :00, :10, :20, :30, :40, :50
+  const remaining = Math.max(0, 10 * 60 - elapsed);
+  const remMin = Math.floor(remaining / 60);
+  const remSec = remaining % 60;
+  const display = (remMin < 10 ? '0' : '') + remMin + ':' + (remSec < 10 ? '0' : '') + remSec;
 
   const el = document.getElementById('timer');
   el.textContent = display;
 
-  if (min >= 7) el.style.color = '#22C55E';       // verde: 10-7 min
-  else if (min >= 3) el.style.color = '#FBBF24';   // amarelo: 7-3 min
-  else el.style.color = '#EF4444';                  // vermelho: <3 min
+  if (remMin >= 7) el.style.color = '#22C55E';       // verde: 10-7 min
+  else if (remMin >= 3) el.style.color = '#FBBF24';   // amarelo: 7-3 min
+  else el.style.color = '#EF4444';                     // vermelho: <3 min
 }
 setInterval(updateTimer, 1000);
+updateTimer();
 
 // ╔══════════════════════════════════════════════════════════╗
 // ║  FETCH & REFRESH                                          ║
@@ -473,15 +479,26 @@ async function refresh() {
   renderClassificacao(data);
   renderPontuacao(data);
   renderWorkshop(data);
-
-  lastFetchTime = Date.now();
 }
 
 // Carga inicial
 refresh();
 
-// Atualização automática a cada 10 minutos
-setInterval(refresh, CONFIG.REFRESH_INTERVAL);
+// Agenda o próximo refresh no próximo múltiplo de 10 min do relógio
+// Ex: se agora são 08:03, o próximo refresh é 08:10, depois 08:20…
+function scheduleNextRefresh() {
+  const now = new Date();
+  const min = now.getMinutes();
+  const sec = now.getSeconds();
+  const elapsed = (min % 10) * 60 + sec;
+  const msUntilNext = (10 * 60 - elapsed) * 1000 + 2000; // +2s de margem
+  setTimeout(() => {
+    refresh();
+    // Depois do primeiro, repete a cada 10 min exatos
+    setInterval(refresh, 10 * 60 * 1000);
+  }, msUntilNext);
+}
+scheduleNextRefresh();
 
 // Dica: abrir a página com ?tv=1 no endereço já liga o Modo TV (útil na TV)
 if (new URLSearchParams(location.search).get('tv') === '1') toggleTV(true);
