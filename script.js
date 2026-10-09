@@ -45,7 +45,7 @@ const ACTIVITIES = [
   'CURTIDAS','COMENTÁRIOS','COMPARTILHAMENTOS','BÔNUS VÍDEO'
 ];
 const ACT_SHORT = ['Cesta','Brinq.','Doaç.','Cam.','Bônus','Desfile','Sober.','Curt.','Com.','Comp.','B.V.'];
-const CRITERIA = ['Experiência geral','Criatividade e inovação','Conhecimento técnico','Organização e envolvimento da equipe'];
+const CRITERIA = ['Experiência geral','Criatividade e inovação','Conhecimento técnico','Organização e envolvimento'];
 const CRIT_SHORT = ['Experiência','Criatividade','Conhecimento','Organização'];
 
 // ╔══════════════════════════════════════════════════════════╗
@@ -106,8 +106,8 @@ function processData(raw) {
       CRITERIA.forEach((c,i) => {
         wsAvg[i] = wsRows.reduce((s,r) => s + (r[c]||0), 0) / wsCount;
       });
-      // Scale: avg * 2.5 per criterion (4 criteria x 10 x 2.5 = max 100)
-      wsTotal = wsAvg.reduce((s,v) => s + v*2.5, 0);
+      // Valores já vêm na escala 0-25 do SharePoint (max 100 = 4 x 25)
+      wsTotal = wsAvg.reduce((s,v) => s + v, 0);
     }
 
     teams.push({
@@ -322,7 +322,7 @@ function renderWorkshop(data) {
     CRIT_SHORT.forEach((c,ci) => {
       html += `<div class="ws-row">
         <span class="ws-row-label" style="color:${t.color}">${c}</span>
-        <div class="ws-row-bar-wrap"><div class="ws-row-bar" data-anim="wsb${idx}_${ci}" style="width:${(p.avg[ci]/10*100).toFixed(0)}%;background:${t.color}"></div></div>
+        <div class="ws-row-bar-wrap"><div class="ws-row-bar" data-anim="wsb${idx}_${ci}" style="width:${(p.avg[ci]/25*100).toFixed(0)}%;background:${t.color}"></div></div>
         <span class="ws-row-val" style="color:${t.color}" data-anim="wsv${idx}_${ci}" data-val="${p.avg[ci]}">${p.avg[ci].toFixed(1)}</span>
       </div>`;
     });
@@ -340,7 +340,7 @@ function renderWorkshop(data) {
       animateNumber(pane.querySelector(`[data-anim="wst${idx}"]`), Math.round(t.wsTotal));
       t.wsAvg.forEach((v, ci) => {
         animateNumber(pane.querySelector(`[data-anim="wsv${idx}_${ci}"]`), v, CONFIG.NUMBER_ANIM_DURATION, 1);
-        pane.querySelector(`[data-anim="wsb${idx}_${ci}"]`).style.width = (v/10*100).toFixed(0)+'%';
+        pane.querySelector(`[data-anim="wsb${idx}_${ci}"]`).style.width = (v/25*100).toFixed(0)+'%';
       });
       if (isUpdate) pane.querySelector(`[data-ws="${idx}"]`).classList.add('flash');
     });
