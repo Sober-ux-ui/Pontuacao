@@ -4,14 +4,14 @@
 const CONFIG = {
   // URL do JSON com os dados (gerado pelo Power Automate)
   // Enquanto estiver vazio, usa dados de exemplo
-  DATA_URL: './dados.json',
+  DATA_URL: 'https://api.github.com/repos/Sober-ux-ui/Pontuacao/contents/dados.json',
 
   // Logo do Movimento Soberana (URL ou caminho do arquivo, ex.: 'logo.png').
   // Enquanto estiver vazio, aparece um espaço reservado "LOGO".
-  LOGO_URL: './LOGOTIPO.png',
+  LOGO_URL: '/LOGOTIPO.png',
 
-  // Intervalo de atualização em milissegundos (10 minutos)
-  REFRESH_INTERVAL: 10 * 60 * 1000,
+  // Intervalo de atualização em milissegundos (5 minutos)
+  REFRESH_INTERVAL: 5 * 60 * 1000,
 
   // Duração das animações em ms
   ANIM_DURATION: 1500,
@@ -45,7 +45,7 @@ const ACTIVITIES = [
   'CURTIDAS','COMENTÁRIOS','COMPARTILHAMENTOS','BÔNUS VÍDEO'
 ];
 const ACT_SHORT = ['Cesta','Brinq.','Doaç.','Cam.','Bônus','Desfile','Sober.','Curt.','Com.','Comp.','B.V.'];
-const CRITERIA = ['Experiência geral','Criatividade e inovação','Conhecimento técnico','Organização e envolvimento'];
+const CRITERIA = ['Experiência geral','Criatividade e inovação','Conhecimento técnico','Organização e envolvimen'];
 const CRIT_SHORT = ['Experiência','Criatividade','Conhecimento','Organização'];
 
 // ╔══════════════════════════════════════════════════════════╗
@@ -427,18 +427,18 @@ function toggleTV(force) {
 }
 
 // ╔══════════════════════════════════════════════════════════╗
-// ║  TIMER — Sincronizado com múltiplos de 10 min no relógio ║
-// ║  Ex: se o evento começa às 08:00, atualiza 08:10, 08:20…║
+// ║  TIMER — Sincronizado com múltiplos de 5 min no relógio  ║
+// ║  Ex: se o evento começa às 08:00, atualiza 08:05, 08:10…║
 // ╚══════════════════════════════════════════════════════════╝
 
 function updateTimer() {
   const now = new Date();
   const min = now.getMinutes();
   const sec = now.getSeconds();
-  // Quanto já passou dentro do ciclo de 10 min atual
-  const elapsed = (min % 10) * 60 + sec;
-  // Quanto falta para o próximo :00, :10, :20, :30, :40, :50
-  const remaining = Math.max(0, 10 * 60 - elapsed);
+  // Quanto já passou dentro do ciclo de 5 min atual
+  const elapsed = (min % 5) * 60 + sec;
+  // Quanto falta para o próximo :00, :05, :10, :15…
+  const remaining = Math.max(0, 5 * 60 - elapsed);
   const remMin = Math.floor(remaining / 60);
   const remSec = remaining % 60;
   const display = (remMin < 10 ? '0' : '') + remMin + ':' + (remSec < 10 ? '0' : '') + remSec;
@@ -446,9 +446,9 @@ function updateTimer() {
   const el = document.getElementById('timer');
   el.textContent = display;
 
-  if (remMin >= 7) el.style.color = '#22C55E';       // verde: 10-7 min
-  else if (remMin >= 3) el.style.color = '#FBBF24';   // amarelo: 7-3 min
-  else el.style.color = '#EF4444';                     // vermelho: <3 min
+  if (remMin >= 3) el.style.color = '#22C55E';         // verde: 5-3 min
+  else if (remMin >= 1) el.style.color = '#FBBF24';     // amarelo: 3-1 min
+  else el.style.color = '#EF4444';                       // vermelho: <1 min
 }
 setInterval(updateTimer, 1000);
 updateTimer();
@@ -460,8 +460,12 @@ async function fetchData() {
   let raw;
   if (CONFIG.DATA_URL) {
     try {
-      const res = await fetch(CONFIG.DATA_URL + '?_t=' + Date.now());
-      raw = await res.json();
+      const res = await fetch(CONFIG.DATA_URL + '?_t=' + Date.now(), {
+        headers: { 'Accept': 'application/vnd.github.v3+json' }
+      });
+      const json = await res.json();
+      // A API do GitHub retorna o conteúdo em base64
+      raw = JSON.parse(atob(json.content));
     } catch (err) {
       console.error('Erro ao buscar dados:', err);
       return null;
@@ -484,19 +488,15 @@ async function refresh() {
 // Carga inicial
 refresh();
 
-// Agenda o próximo refresh no próximo múltiplo de 10 min do relógio
-// Ex: se agora são 08:03, o próximo refresh é 08:10, depois 08:20…
+// Agenda o reload no próximo múltiplo de 5 min do relógio
+// Ex: se agora são 08:03, o próximo reload é 08:05, depois 08:10…
 function scheduleNextRefresh() {
   const now = new Date();
   const min = now.getMinutes();
   const sec = now.getSeconds();
-  const elapsed = (min % 10) * 60 + sec;
-  const msUntilNext = (10 * 60 - elapsed) * 1000 + 2000; // +2s de margem
-  setTimeout(() => {
-    refresh();
-    // Depois do primeiro, repete a cada 10 min exatos
-    setInterval(refresh, 10 * 60 * 1000);
-  }, msUntilNext);
+  const elapsed = (min % 5) * 60 + sec;
+  const msUntilNext = (5 * 60 - elapsed) * 1000 + 2000; // +2s de margem
+  setTimeout(() => location.reload(), msUntilNext);
 }
 scheduleNextRefresh();
 
