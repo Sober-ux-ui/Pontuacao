@@ -8,7 +8,7 @@ const CONFIG = {
 
   // Logo do Movimento Soberana (URL ou caminho do arquivo, ex.: 'logo.png').
   // Enquanto estiver vazio, aparece um espaço reservado "LOGO".
-  LOGO_URL: '/LOGOTIPO.png',
+  LOGO_URL: 'https://api.github.com/repos/Sober-ux-ui/Pontuacao/contents//LOGOTIPO.png',
 
   // Intervalo de atualização em milissegundos (5 minutos)
   REFRESH_INTERVAL: 5 * 60 * 1000,
