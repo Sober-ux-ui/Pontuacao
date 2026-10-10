@@ -464,8 +464,9 @@ async function fetchData() {
         headers: { 'Accept': 'application/vnd.github.v3+json' }
       });
       const json = await res.json();
-      // A API do GitHub retorna o conteúdo em base64
-      raw = JSON.parse(atob(json.content));
+      // A API do GitHub retorna o conteúdo em base64 (decodifica UTF-8 corretamente)
+      const bytes = Uint8Array.from(atob(json.content), c => c.charCodeAt(0));
+      raw = JSON.parse(new TextDecoder().decode(bytes));
     } catch (err) {
       console.error('Erro ao buscar dados:', err);
       return null;
