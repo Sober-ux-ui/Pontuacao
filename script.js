@@ -4,11 +4,11 @@
 const CONFIG = {
   // URL do JSON com os dados (gerado pelo Power Automate)
   // Enquanto estiver vazio, usa dados de exemplo
-  DATA_URL: 'https://api.github.com/repos/Sober-ux-ui/Pontuacao/contents/dados.json',
+  DATA_URL: 'https://raw.githubusercontent.com/Sober-ux-ui/Pontuacao/main/dados.json',
 
   // Logo do Movimento Soberana (URL ou caminho do arquivo, ex.: 'logo.png').
   // Enquanto estiver vazio, aparece um espaço reservado "LOGO".
-  LOGO_URL: 'https://api.github.com/repos/Sober-ux-ui/Pontuacao/contents//LOGOTIPO.png',
+  LOGO_URL: 'https://raw.githubusercontent.com/Sober-ux-ui/Pontuacao/main/LOGOTIPO.png',
 
   // Intervalo de atualização em milissegundos (5 minutos)
   REFRESH_INTERVAL: 5 * 60 * 1000,
@@ -460,13 +460,8 @@ async function fetchData() {
   let raw;
   if (CONFIG.DATA_URL) {
     try {
-      const res = await fetch(CONFIG.DATA_URL + '?_t=' + Date.now(), {
-        headers: { 'Accept': 'application/vnd.github.v3+json' }
-      });
-      const json = await res.json();
-      // A API do GitHub retorna o conteúdo em base64 (decodifica UTF-8 corretamente)
-      const bytes = Uint8Array.from(atob(json.content), c => c.charCodeAt(0));
-      raw = JSON.parse(new TextDecoder().decode(bytes));
+      const res = await fetch(CONFIG.DATA_URL + '?_t=' + Date.now());
+      raw = await res.json();
     } catch (err) {
       console.error('Erro ao buscar dados:', err);
       return null;
