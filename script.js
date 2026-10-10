@@ -8,7 +8,7 @@ const CONFIG = {
 
   // Logo do Movimento Soberana (URL ou caminho do arquivo, ex.: 'logo.png').
   // Enquanto estiver vazio, aparece um espaço reservado "LOGO".
-  LOGO_URL: 'Pontuacao/main/LOGOTIPO.png',
+  LOGO_URL: 'Pontuacao/LOGOTIPO.png',
 
   // Intervalo de atualização em milissegundos (5 minutos)
   REFRESH_INTERVAL: 5 * 60 * 1000,
