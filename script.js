@@ -4,7 +4,7 @@
 const CONFIG = {
   // URL do JSON com os dados (gerado pelo Power Automate)
   // Enquanto estiver vazio, usa dados de exemplo
-  DATA_URL: 'https://raw.githubusercontent.com/Sober-ux-ui/Pontuacao/main/dados.json',
+  DATA_URL: 'https://api.github.com/repos/Sober-ux-ui/Pontuacao/contents/dados.json',
 
   // Logo do Movimento Soberana (URL ou caminho do arquivo, ex.: 'logo.png').
   // Enquanto estiver vazio, aparece um espaço reservado "LOGO".
@@ -44,8 +44,8 @@ const ACTIVITIES = [
   'BÔNUS PESSOA REGISTRADA','DESFILE DE SCRUB','SOBERANA DANCE',
   'CURTIDAS','COMENTÁRIOS','COMPARTILHAMENTOS','BÔNUS VÍDEO'
 ];
-const ACT_SHORT = ['Cesta','Brinq.','Doaç.','Cam.','Bônus','Desfile','Sober.','Curt.','Com.','Comp.','B.V.'];
-const CRITERIA = ['Experiência geral','Criatividade e inovação','Conhecimento técnico','Organização e envolvimen'];
+const ACT_SHORT = ['Cesta','Brinquedos','Doação de Sangue','Caminhada','Bônus Registro','Desfile','Soberana Dance','Curtidas','Comentários','Compartilhamento','Vídeo Bônus'];
+const CRITERIA = ['Experiência geral','Criatividade e inovação','Conhecimento técnico','Organização e envolvimento'];
 const CRIT_SHORT = ['Experiência','Criatividade','Conhecimento','Organização'];
 
 // ╔══════════════════════════════════════════════════════════╗
@@ -64,13 +64,13 @@ function getSampleData() {
       { CURSO:'ESTÉTICA E COSMÉTICA', 'CESTA BÁSICA':800,'BRINQUEDOS':450,'DOAÇÃO DE SANGUE':350,'CAMINHADA':250,'BÔNUS PESSOA REGISTRADA':200,'DESFILE DE SCRUB':160,'SOBERANA DANCE':140,'CURTIDAS':80,'COMENTÁRIOS':60,'COMPARTILHAMENTOS':40,'BÔNUS VÍDEO':25 },
     ],
     workshop: [
-      { WORKSHOP:'ODONTOLOGIA', 'Experiência geral':8, 'Criatividade e inovação':7, 'Conhecimento técnico':9, 'Organização e envolvimento da equipe':8 },
-      { WORKSHOP:'ODONTOLOGIA', 'Experiência geral':9, 'Criatividade e inovação':8, 'Conhecimento técnico':8, 'Organização e envolvimento da equipe':9 },
-      { WORKSHOP:'FARMÁCIA', 'Experiência geral':7, 'Criatividade e inovação':9, 'Conhecimento técnico':7, 'Organização e envolvimento da equipe':8 },
-      { WORKSHOP:'ENFERMAGEM', 'Experiência geral':9, 'Criatividade e inovação':8, 'Conhecimento técnico':9, 'Organização e envolvimento da equipe':9 },
-      { WORKSHOP:'ENFERMAGEM', 'Experiência geral':10, 'Criatividade e inovação':9, 'Conhecimento técnico':10, 'Organização e envolvimento da equipe':8 },
-      { WORKSHOP:'ENFERMAGEM', 'Experiência geral':8, 'Criatividade e inovação':7, 'Conhecimento técnico':8, 'Organização e envolvimento da equipe':9 },
-      { WORKSHOP:'MEDICINA VETERINÁRIA', 'Experiência geral':8, 'Criatividade e inovação':8, 'Conhecimento técnico':7, 'Organização e envolvimento da equipe':7 },
+      { WORKSHOP:'ODONTOLOGIA', 'Experiência geral':8, 'Criatividade e inovação':7, 'Conhecimento técnico':9, 'Organização e envolvimentoto da equipe':8 },
+      { WORKSHOP:'ODONTOLOGIA', 'Experiência geral':9, 'Criatividade e inovação':8, 'Conhecimento técnico':8, 'Organização e envolvimentoto da equipe':9 },
+      { WORKSHOP:'FARMÁCIA', 'Experiência geral':7, 'Criatividade e inovação':9, 'Conhecimento técnico':7, 'Organização e envolvimentoto da equipe':8 },
+      { WORKSHOP:'ENFERMAGEM', 'Experiência geral':9, 'Criatividade e inovação':8, 'Conhecimento técnico':9, 'Organização e envolvimentoto da equipe':9 },
+      { WORKSHOP:'ENFERMAGEM', 'Experiência geral':10, 'Criatividade e inovação':9, 'Conhecimento técnico':10, 'Organização e envolvimentoto da equipe':8 },
+      { WORKSHOP:'ENFERMAGEM', 'Experiência geral':8, 'Criatividade e inovação':7, 'Conhecimento técnico':8, 'Organização e envolvimentoto da equipe':9 },
+      { WORKSHOP:'MEDICINA VETERINÁRIA', 'Experiência geral':8, 'Criatividade e inovação':8, 'Conhecimento técnico':7, 'Organização e envolvimentoto da equipe':7 },
     ]
   };
 }
@@ -460,8 +460,16 @@ async function fetchData() {
   let raw;
   if (CONFIG.DATA_URL) {
     try {
-      const res = await fetch(CONFIG.DATA_URL + '?_t=' + Date.now());
-      raw = await res.json();
+      const res = await fetch(CONFIG.DATA_URL, {
+        headers: { 'Accept': 'application/vnd.github.v3+json' },
+        cache: 'no-store'
+      });
+      const api = await res.json();
+      // API retorna conteúdo em base64; decodifica com suporte a UTF-8
+      const bin = atob(api.content.replace(/\n/g, ''));
+      const bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      raw = JSON.parse(new TextDecoder('utf-8').decode(bytes));
     } catch (err) {
       console.error('Erro ao buscar dados:', err);
       return null;
