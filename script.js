@@ -29,14 +29,15 @@ const CONFIG = {
 // ║  DADOS DAS EQUIPES                                       ║
 // ╚══════════════════════════════════════════════════════════╝
 const TEAMS = {
-  'ODONTOLOGIA':          { pk:'ODO',  color:'#3B82F6', emoji:'🦷' },
-  'FARMÁCIA':             { pk:'FARM', color:'#22C55E', emoji:'💊' },
-  'ENFERMAGEM':           { pk:'ENF',  color:'#EC4899', emoji:'🏥' },
-  'PSICOLOGIA':           { pk:'PSI',  color:'#A855F7', emoji:'🧠' },
-  'TERAPIA OCUPACIONAL':  { pk:'TO',   color:'#F97316', emoji:'🤲' },
-  'MEDICINA VETERINÁRIA': { pk:'MEDV', color:'#06B6D4', emoji:'🐾' },
-  'BIOMEDICINA':          { pk:'BIO',  color:'#EF4444', emoji:'🔬' },
-  'ESTÉTICA E COSMÉTICA': { pk:'EST',  color:'#EAB308', emoji:'✨' },
+  'ODONTOLOGIA':          { pk:'ODO',  color:'#00276f', emoji:'🦷' },
+  'FARMÁCIA':             { pk:'FARM', color:'#328ac4', emoji:'💊' },
+  'ENFERMAGEM':           { pk:'ENF',  color:'#013f33', emoji:'🏥' },
+  'PSICOLOGIA':           { pk:'PSI',  color:'#540b55', emoji:'🧠' },
+  'TERAPIA OCUPACIONAL':  { pk:'TO',   color:'#aa402f', emoji:'🤲' },
+  'MEDICINA VETERINÁRIA': { pk:'MEDV', color:'#4b331e', emoji:'🐾' },
+  'BIOMEDICINA':          { pk:'BIO',  color:' #4a9b9f', emoji:'🔬' },
+  'ESTÉTICA E COSMÉTICA': { pk:'EST',  color:'#6c0c0a', emoji:'✨' },
+  'GESTÃO HOSPITALAR':    { pk:'GH',  color:'#474747', emoji:'😷' }
 };
 
 const ACTIVITIES = [
