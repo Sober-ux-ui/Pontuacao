@@ -277,7 +277,7 @@ function renderPontuacao(data) {
   html += `<div class="section-title">Workshop — Dia 3 <span class="badge">4 critérios</span></div>`;
   html += `<div class="tbl-wrap"><table class="score-table"><thead><tr><th>Equipe</th>`;
   CRIT_SHORT.forEach(c => html += `<th>${c}</th>`);
-  html += `<th>Aval.</th><th>TOTAL</th></tr></thead><tbody>`;
+  html += `<th>Avaliações</th><th>TOTAL</th></tr></thead><tbody>`;
   data.wsTeams.forEach(t => {
     const has = t.wsTotal !== null;
     html += `<tr><td><div class="team-cell"><span class="team-dot" style="background:${t.color}"></span><span style="color:${t.color}">${t.emoji} ${t.curso}</span></div></td>`;
